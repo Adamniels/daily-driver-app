@@ -1,6 +1,6 @@
 # Phase 7 — Polish + Deployment
 
-**Status:** Not started
+**Status:** Part A implemented 2026-06-11 (awaiting Adam's review); Part B (deployment) deliberately deferred at Adam's request
 **Depends on:** Phases 4–6
 **Blocks:** nothing (final phase)
 
@@ -24,6 +24,34 @@ Empty states for all screens (new account, all done today, no tasks), loading sk
 - Root README: architecture overview, quickstart, screenshots
 - `pnpm lint && pnpm test` green across workspace, no skipped tests
 - GitHub Actions: lint + test on push (cheap insurance, 20 lines of yaml)
+
+### Part A implementation notes (2026-06-11)
+
+- **Evolution**: dedicated overlay with three beats (charge: glow swells +
+  body shakes ~1.4s → white flash → reveal: new form pops with a sparkle
+  ring + stage name card, ~2.4s). Tap anywhere skips. Evolution outranks
+  the level up overlay when both fire on one toggle.
+- **Perfect day**: rainbow band sweeps once across the today list
+  (replayed per perfect day via key remount) + creature hearts + a small
+  "see you tomorrow" line under the list.
+- **Level up**: confetti + card as before, now with creature jump and a
+  success haptic. Haptics: light tick on habit/task check, success on
+  level up, heavy on evolution; no-ops on web.
+- **Creature**: three layered idle loops (bob, sway, breathe) with
+  different periods per mood so motion never repeats exactly, randomized
+  blink loop, occasional pupil look-around. Egg and closed-eye moods skip
+  blinking.
+- **Identity**: generated icon set (cream blob on violet, sprout leaf),
+  splash (violet blob on cream), Android adaptive icon, web favicon —
+  SVG-rendered PNGs in `apps/app/assets/`.
+- **UX sweep**: skeleton placeholders replaced every spinner (home,
+  habits, edit, tasks; stats already had them). Dark mode deferred —
+  appetite ran out exactly as the spec allowed.
+- **Engineering**: README rewritten (architecture, two-terminal
+  quickstart, CI section); GitHub Actions workflow runs lint, typecheck
+  and all tests against a Postgres 18 service container.
+- Screenshots for the README: pending — needs Adam's simulator (sandbox
+  can't capture the running app).
 
 ## Part B — Deployment
 

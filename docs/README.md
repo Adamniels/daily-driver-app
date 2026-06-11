@@ -11,8 +11,8 @@ High level vision and decisions: [`../PLAN.md`](../PLAN.md). This folder holds t
 | 3. API | [phase-3-api.md](phase-3-api.md) | Done (2026-06-11) | 1, 2 |
 | 4. App foundation + Home | [phase-4-app-home.md](phase-4-app-home.md) | Done (2026-06-11) | 3 |
 | 5. Stats dashboard | [phase-5-stats.md](phase-5-stats.md) | Done (2026-06-11) | 4 |
-| 6. Tasks + reminders | [phase-6-tasks-reminders.md](phase-6-tasks-reminders.md) | In progress (implemented 2026-06-11, awaiting device review) | 4 |
-| 7. Polish + deployment | [phase-7-polish-deploy.md](phase-7-polish-deploy.md) | Not started | 4, 5, 6 |
+| 6. Tasks + reminders | [phase-6-tasks-reminders.md](phase-6-tasks-reminders.md) | Done (2026-06-11) | 4 |
+| 7. Polish + deployment | [phase-7-polish-deploy.md](phase-7-polish-deploy.md) | Part A implemented (2026-06-11, awaiting review); Part B deferred | 4, 5, 6 |
 
 Statuses: `Not started` → `In progress` → `Done (YYYY-MM-DD)`.
 

@@ -14,7 +14,6 @@ import Animated, {
   withTiming,
   ZoomIn,
 } from 'react-native-reanimated';
-import type { Stage } from '@habit/core';
 import { SparkleIcon } from '@/components/icons';
 import { palette } from '@/theme/colors';
 
@@ -56,11 +55,10 @@ function ConfettiPiece({ index }: { index: number }) {
 interface CelebrationOverlayProps {
   level: number;
   creatureName: string;
-  evolvedTo: Stage | null;
   onDone: () => void;
 }
 
-export function CelebrationOverlay({ level, creatureName, evolvedTo, onDone }: CelebrationOverlayProps) {
+export function CelebrationOverlay({ level, creatureName, onDone }: CelebrationOverlayProps) {
   useEffect(() => {
     const timer = setTimeout(onDone, 3200);
     return () => clearTimeout(timer);
@@ -82,15 +80,9 @@ export function CelebrationOverlay({ level, creatureName, evolvedTo, onDone }: C
       >
         <SparkleIcon size={36} />
         <Text className="font-sans-black text-3xl text-violet">Level {level}!</Text>
-        {evolvedTo ? (
-          <Text className="text-center font-sans-bold text-base text-ink">
-            {creatureName} evolved into a {evolvedTo}!
-          </Text>
-        ) : (
-          <Text className="text-center font-sans text-sm text-ink/60">
-            {creatureName} is getting stronger.
-          </Text>
-        )}
+        <Text className="text-center font-sans text-sm text-ink/60">
+          {creatureName} is getting stronger.
+        </Text>
       </Animated.View>
     </Pressable>
   );

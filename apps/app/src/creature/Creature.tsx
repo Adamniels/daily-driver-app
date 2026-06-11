@@ -1,9 +1,12 @@
 /**
  * The companion. One SVG blob character, varied by evolution stage and
- * animated by mood (docs/phase-4-app-home.md). Art is deliberately simple
- * and replaceable — the contract is { stage, mood, size } plus two
- * "signal" props that trigger reactions when their value increases:
- * hopSignal (habit checked) and heartsSignal (tap / perfect day).
+ * animated by mood. The idle motion is three layered loops — bob, sway
+ * and breathing — tuned per mood, plus a blink loop and an occasional
+ * pupil look-around, so it reads as alive rather than mechanical.
+ *
+ * Contract: { stage, mood, size } + two signal props that trigger
+ * reactions when their value increases: hopSignal (habit checked) and
+ * heartsSignal (tap / perfect day).
  */
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
@@ -30,25 +33,43 @@ interface CreatureProps {
   heartsSignal?: number;
 }
 
-/** Idle bob per mood: amplitude (px at size 200) and period (ms). */
-const IDLE: Record<Mood, { amp: number; period: number }> = {
-  thriving: { amp: 7, period: 600 },
-  happy: { amp: 5, period: 950 },
-  okay: { amp: 3, period: 1500 },
-  sad: { amp: 1.5, period: 2400 },
-  sleeping: { amp: 0.8, period: 3200 },
+/** Idle motion per mood: bob amplitude/period, sway angle, breath depth. */
+const IDLE: Record<Mood, { amp: number; period: number; sway: number; breath: number }> = {
+  thriving: { amp: 7, period: 600, sway: 2.2, breath: 0.02 },
+  happy: { amp: 5, period: 950, sway: 1.6, breath: 0.018 },
+  okay: { amp: 3, period: 1500, sway: 1, breath: 0.015 },
+  sad: { amp: 1.5, period: 2400, sway: 0.5, breath: 0.012 },
+  sleeping: { amp: 0.6, period: 3200, sway: 0, breath: 0.03 },
 };
 
-function Eyes({ mood }: { mood: Mood }) {
+const OPEN_EYED: readonly Mood[] = ['thriving', 'happy', 'sad'];
+
+interface EyeState {
+  blink: boolean;
+  /** Pupil x offset, -3..3, for the occasional look around. */
+  lookX: number;
+}
+
+function Eyes({ mood, eyes }: { mood: Mood; eyes: EyeState }) {
+  const { blink, lookX } = eyes;
+
+  if (mood === 'sleeping' || (blink && OPEN_EYED.includes(mood))) {
+    return (
+      <>
+        <Path d="M62 90 q10 8 20 0" fill="none" stroke={palette.ink} strokeWidth={4.5} strokeLinecap="round" />
+        <Path d="M118 90 q10 8 20 0" fill="none" stroke={palette.ink} strokeWidth={4.5} strokeLinecap="round" />
+      </>
+    );
+  }
+
   switch (mood) {
     case 'thriving':
       return (
         <>
-          <Circle cx={72} cy={88} r={9} fill={palette.ink} />
-          <Circle cx={128} cy={88} r={9} fill={palette.ink} />
-          <Circle cx={75} cy={84} r={3.2} fill="white" />
-          <Circle cx={131} cy={84} r={3.2} fill="white" />
-          {/* sparkles */}
+          <Circle cx={72 + lookX} cy={88} r={9} fill={palette.ink} />
+          <Circle cx={128 + lookX} cy={88} r={9} fill={palette.ink} />
+          <Circle cx={75 + lookX} cy={84} r={3.2} fill="white" />
+          <Circle cx={131 + lookX} cy={84} r={3.2} fill="white" />
           <Path d="M52 64 l3 6 6 3 -6 3 -3 6 -3 -6 -6 -3 6 -3 z" fill={palette.sunshine} />
           <Path d="M150 60 l2.5 5 5 2.5 -5 2.5 -2.5 5 -2.5 -5 -5 -2.5 5 -2.5 z" fill={palette.sunshine} />
         </>
@@ -56,10 +77,10 @@ function Eyes({ mood }: { mood: Mood }) {
     case 'happy':
       return (
         <>
-          <Circle cx={72} cy={88} r={8} fill={palette.ink} />
-          <Circle cx={128} cy={88} r={8} fill={palette.ink} />
-          <Circle cx={75} cy={85} r={2.6} fill="white" />
-          <Circle cx={131} cy={85} r={2.6} fill="white" />
+          <Circle cx={72 + lookX} cy={88} r={8} fill={palette.ink} />
+          <Circle cx={128 + lookX} cy={88} r={8} fill={palette.ink} />
+          <Circle cx={75 + lookX} cy={85} r={2.6} fill="white" />
+          <Circle cx={131 + lookX} cy={85} r={2.6} fill="white" />
         </>
       );
     case 'okay':
@@ -72,18 +93,10 @@ function Eyes({ mood }: { mood: Mood }) {
     case 'sad':
       return (
         <>
-          <Circle cx={72} cy={92} r={6} fill={palette.ink} />
-          <Circle cx={128} cy={92} r={6} fill={palette.ink} />
-          {/* droopy brows */}
+          <Circle cx={72 + lookX} cy={92} r={6} fill={palette.ink} />
+          <Circle cx={128 + lookX} cy={92} r={6} fill={palette.ink} />
           <Path d="M60 78 l22 6" stroke={palette.ink} strokeWidth={4} strokeLinecap="round" />
           <Path d="M140 78 l-22 6" stroke={palette.ink} strokeWidth={4} strokeLinecap="round" />
-        </>
-      );
-    case 'sleeping':
-      return (
-        <>
-          <Path d="M62 90 q10 8 20 0" fill="none" stroke={palette.ink} strokeWidth={4.5} strokeLinecap="round" />
-          <Path d="M118 90 q10 8 20 0" fill="none" stroke={palette.ink} strokeWidth={4.5} strokeLinecap="round" />
         </>
       );
   }
@@ -105,7 +118,7 @@ function Mouth({ mood }: { mood: Mood }) {
 }
 
 /** The blob body with stage accessories, drawn in a 200×200 viewBox. */
-function CreatureArt({ stage, mood }: { stage: Stage; mood: Mood }) {
+export function CreatureArt({ stage, mood, eyes }: { stage: Stage; mood: Mood; eyes: EyeState }) {
   if (stage === 'egg') {
     return (
       <Svg viewBox="0 0 200 200" width="100%" height="100%">
@@ -128,36 +141,31 @@ function CreatureArt({ stage, mood }: { stage: Stage; mood: Mood }) {
       {stage === 'mythic' && (
         <Circle cx={100} cy={108} r={86} fill={palette.sunshine} opacity={0.25} />
       )}
-      {/* arms from juvenile on */}
       {(stage === 'juvenile' || adultish) && (
         <>
           <Ellipse cx={30} cy={120} rx={14} ry={22} fill={palette.violet} transform="rotate(20 30 120)" />
           <Ellipse cx={170} cy={120} rx={14} ry={22} fill={palette.violet} transform="rotate(-20 170 120)" />
         </>
       )}
-      {/* body */}
       <Path
         d="M100 30 C 150 30 168 76 168 116 a68 62 0 0 1 -136 0 C 32 76 50 30 100 30 z"
         fill={palette.violet}
       />
       <Ellipse cx={100} cy={138} rx={42} ry={30} fill="#FFFDF7" opacity={0.85} />
-      {/* leaf from sprout on */}
       {stage !== 'hatchling' && (
         <>
           <Path d="M100 30 q2 -16 14 -22" fill="none" stroke={palette.mint} strokeWidth={5} strokeLinecap="round" />
           <Path d="M114 8 q18 2 20 18 q-18 2 -20 -18 z" fill={palette.mint} />
         </>
       )}
-      {/* adult accessory: a little scarf */}
       {adultish && (
         <>
           <Path d="M58 142 q42 22 84 0 l-4 14 q-38 18 -76 0 z" fill={palette.coral} />
           <Path d="M130 150 l10 26 q-12 4 -18 -4 z" fill={palette.coral} />
         </>
       )}
-      <Eyes mood={mood} />
+      <Eyes mood={mood} eyes={eyes} />
       <Mouth mood={mood} />
-      {/* blush */}
       {(mood === 'thriving' || mood === 'happy') && (
         <>
           <Ellipse cx={56} cy={104} rx={9} ry={5.5} fill={palette.coral} opacity={0.45} />
@@ -192,33 +200,96 @@ function FloatingHeart({ index }: { index: number }) {
   );
 }
 
+/** Blink + look-around driver: randomized timers, paused for closed-eye moods. */
+function useEyeLife(stage: Stage, mood: Mood): EyeState {
+  const [blink, setBlink] = useState(false);
+  const [lookX, setLookX] = useState(0);
+
+  useEffect(() => {
+    if (stage === 'egg' || !OPEN_EYED.includes(mood)) return;
+    let blinkTimer: ReturnType<typeof setTimeout>;
+    let lookTimer: ReturnType<typeof setTimeout>;
+    let alive = true;
+
+    const scheduleBlink = () => {
+      blinkTimer = setTimeout(() => {
+        if (!alive) return;
+        setBlink(true);
+        setTimeout(() => {
+          if (alive) setBlink(false);
+        }, 140);
+        scheduleBlink();
+      }, 2500 + Math.random() * 2500);
+    };
+    const scheduleLook = () => {
+      lookTimer = setTimeout(() => {
+        if (!alive) return;
+        setLookX(Math.random() < 0.5 ? -3 : 3);
+        setTimeout(() => {
+          if (alive) setLookX(0);
+        }, 900);
+        scheduleLook();
+      }, 4000 + Math.random() * 4000);
+    };
+    scheduleBlink();
+    scheduleLook();
+    return () => {
+      alive = false;
+      clearTimeout(blinkTimer);
+      clearTimeout(lookTimer);
+    };
+  }, [stage, mood]);
+
+  return { blink, lookX };
+}
+
 export function Creature({ stage, mood, size, hopSignal = 0, heartsSignal = 0 }: CreatureProps) {
   const bob = useSharedValue(0);
+  const sway = useSharedValue(0);
+  const breathe = useSharedValue(0);
   const hop = useSharedValue(0);
   const wiggle = useSharedValue(0);
   const [hearts, setHearts] = useState<number[]>([]);
   const heartId = useRef(0);
   const prevHop = useRef(hopSignal);
   const prevHearts = useRef(heartsSignal);
+  const eyes = useEyeLife(stage, mood);
 
-  // Idle bob, retuned whenever mood changes. Mythic floats a little extra.
+  // Three layered idle loops with different periods so motion never
+  // repeats exactly. Retuned when mood changes.
   useEffect(() => {
-    const { amp, period } = IDLE[mood];
+    const { amp, period, sway: swayDeg, breath } = IDLE[mood];
     const extra = stage === 'mythic' ? 4 : 0;
+    const ease = Easing.inOut(Easing.quad);
     bob.value = 0;
     bob.value = withRepeat(
       withSequence(
-        withTiming(-(amp + extra) * (size / 200), {
-          duration: period,
-          easing: Easing.inOut(Easing.quad),
-        }),
-        withTiming(0, { duration: period, easing: Easing.inOut(Easing.quad) }),
+        withTiming(-(amp + extra) * (size / 200), { duration: period, easing: ease }),
+        withTiming(0, { duration: period, easing: ease }),
       ),
       -1,
     );
-  }, [mood, stage, size, bob]);
+    sway.value = 0;
+    sway.value =
+      swayDeg === 0
+        ? 0
+        : withRepeat(
+            withSequence(
+              withTiming(swayDeg, { duration: period * 1.7, easing: ease }),
+              withTiming(-swayDeg, { duration: period * 1.7, easing: ease }),
+            ),
+            -1,
+          );
+    breathe.value = 0;
+    breathe.value = withRepeat(
+      withSequence(
+        withTiming(breath, { duration: period * 1.3, easing: ease }),
+        withTiming(0, { duration: period * 1.3, easing: ease }),
+      ),
+      -1,
+    );
+  }, [mood, stage, size, bob, sway, breathe]);
 
-  // Hop when a habit gets checked off.
   useEffect(() => {
     if (hopSignal > prevHop.current) {
       hop.value = withSequence(
@@ -229,7 +300,6 @@ export function Creature({ stage, mood, size, hopSignal = 0, heartsSignal = 0 }:
     prevHop.current = hopSignal;
   }, [hopSignal, hop, size]);
 
-  // Hearts on tap or perfect day.
   useEffect(() => {
     if (heartsSignal > prevHearts.current) {
       const burst = [heartId.current, heartId.current + 1, heartId.current + 2];
@@ -260,7 +330,9 @@ export function Creature({ stage, mood, size, hopSignal = 0, heartsSignal = 0 }:
   const bodyStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: bob.value + hop.value },
-      { rotate: `${wiggle.value}deg` },
+      { rotate: `${sway.value + wiggle.value}deg` },
+      { scaleY: 1 + breathe.value },
+      { scaleX: 1 - breathe.value * 0.6 },
     ],
   }));
 
@@ -268,7 +340,7 @@ export function Creature({ stage, mood, size, hopSignal = 0, heartsSignal = 0 }:
     <View style={{ width: size, height: size }}>
       <Pressable accessibilityLabel="Your companion" onPress={wiggleAndHeart} hitSlop={4}>
         <Animated.View style={[bodyStyle, { width: size, height: size }]}>
-          <CreatureArt stage={stage} mood={mood} />
+          <CreatureArt stage={stage} mood={mood} eyes={eyes} />
         </Animated.View>
       </Pressable>
       {mood === 'sleeping' && <SleepyZzz />}

@@ -6,7 +6,6 @@
  */
 import { useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -17,9 +16,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Skeleton } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 import { XpParticle } from '@/features/home/XpParticle';
 import { confirmAsync } from '@/lib/confirm';
+import { hapticTick } from '@/lib/haptics';
 import { cancelTaskReminder, scheduleTaskReminder, toDate } from '@/lib/notifications';
 import { useTRPC } from '@/lib/trpc';
 import { palette } from '@/theme/colors';
@@ -80,6 +81,7 @@ export function TasksScreen() {
             ].slice(0, 20),
           };
         });
+        hapticTick();
         spawnParticle();
         return { prev };
       },
@@ -229,8 +231,10 @@ export function TasksScreen() {
         </View>
 
         {listQuery.isPending ? (
-          <View className="flex-1 items-center justify-center">
-            <ActivityIndicator color={palette.violet} size="large" />
+          <View className="gap-3 px-6">
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
           </View>
         ) : list ? (
           <ScrollView contentContainerClassName="gap-3 px-6 pb-10" keyboardShouldPersistTaps="handled">

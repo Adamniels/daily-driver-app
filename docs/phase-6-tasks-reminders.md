@@ -1,6 +1,6 @@
 # Phase 6 — Tasks + Reminders
 
-**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
+**Status:** Done (2026-06-11) — review passed
 **Depends on:** Phase 4
 **Blocks:** nothing
 

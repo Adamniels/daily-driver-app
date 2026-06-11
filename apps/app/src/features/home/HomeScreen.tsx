@@ -8,7 +8,7 @@
  * onSuccess; onError restores both caches, shakes the card and toasts.
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -16,14 +16,18 @@ import { completionXp, isScheduledOn } from '@habit/core';
 import type { Stage, Weekday } from '@habit/core';
 import { Button } from '@/components/Button';
 import { SparkleIcon } from '@/components/icons';
+import { Skeleton } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 import { Creature } from '@/creature/Creature';
 import { XpBar } from '@/components/XpBar';
 import { useAuth } from '@/lib/auth';
 import { todayLocal } from '@/lib/dates';
+import { hapticHeavy, hapticSuccess, hapticTick } from '@/lib/haptics';
 import { useTRPC } from '@/lib/trpc';
 import type { HabitRow } from '@/lib/trpc';
 import { CelebrationOverlay } from './CelebrationOverlay';
+import { EvolutionOverlay } from './EvolutionOverlay';
+import { RainbowShimmer } from './RainbowShimmer';
 import { TodayHabitCard } from './TodayHabitCard';
 import type { Particle } from './TodayHabitCard';
 
@@ -35,10 +39,9 @@ function schedulable(habit: HabitRow): { type: 'daily' | 'weekly'; scheduledDays
   };
 }
 
-interface Celebration {
-  level: number;
-  evolvedTo: Stage | null;
-}
+type Celebration =
+  | { kind: 'levelUp'; level: number }
+  | { kind: 'evolution'; from: Stage; to: Stage };
 
 export function HomeScreen() {
   const trpc = useTRPC();
@@ -56,6 +59,7 @@ export function HomeScreen() {
   const [shakeKeys, setShakeKeys] = useState<Record<string, number>>({});
   const [hopSignal, setHopSignal] = useState(0);
   const [heartsSignal, setHeartsSignal] = useState(0);
+  const [shimmerKey, setShimmerKey] = useState(0);
   const [celebration, setCelebration] = useState<Celebration | null>(null);
   const particleKey = useRef(0);
 
@@ -116,14 +120,21 @@ export function HomeScreen() {
         void queryClient.invalidateQueries({ queryKey: trpc.stats.pathKey() });
 
         if (data.completed) {
-          if (data.perfectDay) setHeartsSignal((s) => s + 1);
+          if (data.perfectDay) {
+            setHeartsSignal((s) => s + 1);
+            setShimmerKey((k) => k + 1);
+          }
           const prevLevel = ctx?.prevCreature?.level.level;
           const prevStage = ctx?.prevCreature?.state.stage;
-          if (prevLevel !== undefined && data.level.level > prevLevel) {
-            setCelebration({
-              level: data.level.level,
-              evolvedTo: prevStage !== undefined && data.creature.stage !== prevStage ? data.creature.stage : null,
-            });
+          // Evolution outranks level up: it is the rarer moment, and a
+          // stage change always implies one.
+          if (prevStage !== undefined && data.creature.stage !== prevStage) {
+            hapticHeavy();
+            setCelebration({ kind: 'evolution', from: prevStage, to: data.creature.stage });
+          } else if (prevLevel !== undefined && data.level.level > prevLevel) {
+            hapticSuccess();
+            setHopSignal((s) => s + 1); // the creature jumps with you
+            setCelebration({ kind: 'levelUp', level: data.level.level });
           }
         }
       },
@@ -141,6 +152,7 @@ export function HomeScreen() {
       if (!habit.completedToday) {
         // Optimistic celebration: engine-computed XP for the particle,
         // creature hop. Exact totals reconcile from the server response.
+        hapticTick();
         spawnParticle(habit.id, completionXp({ baseXp: habit.baseXp }, habit.currentStreak));
         setHopSignal((s) => s + 1);
       }
@@ -164,8 +176,14 @@ export function HomeScreen() {
 
   if (habitsQuery.isPending || creatureQuery.isPending) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-cream">
-        <ActivityIndicator color="#7C6FF0" size="large" />
+      <SafeAreaView className="flex-1 bg-cream" edges={['top']}>
+        <View className="gap-4 px-6 pt-8">
+          <Skeleton className="h-56 rounded-b-[90px]" />
+          <Skeleton className="h-10 w-2/3 self-center" />
+          <Skeleton className="mt-4 h-20" />
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
+        </View>
       </SafeAreaView>
     );
   }
@@ -261,26 +279,41 @@ export function HomeScreen() {
               </Link>
             </View>
           ) : (
-            <View className="gap-3">
-              {todayHabits.map((habit) => (
-                <TodayHabitCard
-                  key={habit.id}
-                  habit={habit}
-                  particles={particles[habit.id] ?? []}
-                  shakeKey={shakeKeys[habit.id] ?? 0}
-                  onToggle={() => handleToggle(habit)}
-                />
-              ))}
+            <View>
+              <View className="gap-3">
+                {todayHabits.map((habit) => (
+                  <TodayHabitCard
+                    key={habit.id}
+                    habit={habit}
+                    particles={particles[habit.id] ?? []}
+                    shakeKey={shakeKeys[habit.id] ?? 0}
+                    onToggle={() => handleToggle(habit)}
+                  />
+                ))}
+              </View>
+              {shimmerKey > 0 && <RainbowShimmer key={shimmerKey} />}
+              {perfectDay && (
+                <Text className="mt-3 text-center font-sans text-sm text-ink/50">
+                  Everything done — {creature.name} is glowing. See you tomorrow!
+                </Text>
+              )}
             </View>
           )}
         </View>
       </ScrollView>
 
-      {celebration && (
+      {celebration?.kind === 'levelUp' && (
         <CelebrationOverlay
           level={celebration.level}
           creatureName={creature.name}
-          evolvedTo={celebration.evolvedTo}
+          onDone={() => setCelebration(null)}
+        />
+      )}
+      {celebration?.kind === 'evolution' && (
+        <EvolutionOverlay
+          from={celebration.from}
+          to={celebration.to}
+          creatureName={creature.name}
           onDone={() => setCelebration(null)}
         />
       )}

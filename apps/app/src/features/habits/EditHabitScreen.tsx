@@ -1,10 +1,11 @@
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Weekday } from '@habit/core';
 import type { ColorToken } from '@habit/shared';
 import { Button } from '@/components/Button';
+import { Skeleton } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 import { confirmAsync } from '@/lib/confirm';
 import { useTRPC } from '@/lib/trpc';
@@ -55,11 +56,17 @@ export function EditHabitScreen() {
 
   if (habitsQuery.isPending || !habit) {
     return (
-      <SafeAreaView className="flex-1 items-center justify-center bg-cream">
+      <SafeAreaView className="flex-1 bg-cream" edges={['top']}>
         {habitsQuery.isPending ? (
-          <ActivityIndicator color="#7C6FF0" size="large" />
+          <View className="gap-4 px-6 pt-6">
+            <Skeleton className="h-12" />
+            <Skeleton className="h-40" />
+            <Skeleton className="h-12" />
+          </View>
         ) : (
-          <Text className="font-sans-bold text-base text-ink">Habit not found.</Text>
+          <View className="flex-1 items-center justify-center">
+            <Text className="font-sans-bold text-base text-ink">Habit not found.</Text>
+          </View>
         )}
       </SafeAreaView>
     );

@@ -4,11 +4,12 @@
  * history — never deletes).
  */
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { ColorToken } from '@habit/shared';
+import { Skeleton } from '@/components/Skeleton';
 import { StreakFlame } from '@/components/StreakFlame';
 import { useToast } from '@/components/Toast';
 import { confirmAsync } from '@/lib/confirm';
@@ -120,8 +121,10 @@ export function HabitsScreen() {
       </View>
 
       {habitsQuery.isPending ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator color="#7C6FF0" size="large" />
+        <View className="gap-3 px-6">
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
+          <Skeleton className="h-20" />
         </View>
       ) : (
         <ScrollView contentContainerClassName="gap-3 px-6 pb-10">

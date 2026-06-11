@@ -8,7 +8,10 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "backgroundColor": "#FFF8F0",
+    "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/splash-icon.png",
+      "imageWidth": 180,
       "backgroundColor": "#FFF8F0",
       "resizeMode": "contain"
     },
@@ -18,11 +21,16 @@
     },
     "android": {
       "package": "dev.adam.habitquest",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#7C6FF0"
+      }
     },
     "web": {
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "favicon": "./assets/favicon.png"
     },
     "plugins": ["expo-router", "expo-secure-store", "expo-font"],
     "experiments": {

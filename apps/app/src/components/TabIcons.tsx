@@ -25,6 +25,18 @@ export function BlobTabIcon({ color, size = 26 }: TabIconProps) {
   );
 }
 
+/** Checklist lines for the tasks tab. */
+export function ListTabIcon({ color, size = 26 }: TabIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Circle cx={5} cy={6} r={2} fill={color} />
+      <Circle cx={5} cy={12} r={2} fill={color} />
+      <Circle cx={5} cy={18} r={2} fill={color} />
+      <Path d="M9.5 5 h11 v2 h-11 z M9.5 11 h11 v2 h-11 z M9.5 17 h8 v2 h-8 z" fill={color} />
+    </Svg>
+  );
+}
+
 /** Three rounded bars for the stats tab. */
 export function ChartTabIcon({ color, size = 26 }: TabIconProps) {
   return (

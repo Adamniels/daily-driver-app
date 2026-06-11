@@ -1,5 +1,6 @@
 import '../global.css';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -27,9 +28,11 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <Providers>
-      <StatusBar style="dark" />
-      <Slot />
-    </Providers>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Providers>
+        <StatusBar style="dark" />
+        <Slot />
+      </Providers>
+    </GestureHandlerRootView>
   );
 }

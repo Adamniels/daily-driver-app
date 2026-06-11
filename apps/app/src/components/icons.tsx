@@ -90,6 +90,19 @@ export function CheckCircleIcon({ size = 16, color = palette.mint }: IconProps) 
   );
 }
 
+/** Bell for reminders. */
+export function BellIcon({ size = 14, color = palette.inkSoft }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12 2.5 a6.5 6.5 0 0 1 6.5 6.5 c0 3.2 0.8 5.2 1.9 6.6 a1 1 0 0 1 -0.8 1.6 H4.4 a1 1 0 0 1 -0.8 -1.6 C4.7 14.2 5.5 12.2 5.5 9 A6.5 6.5 0 0 1 12 2.5 z
+           M 9.7 19.2 h4.6 a2.4 2.4 0 0 1 -4.6 0 z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
 /** Heart for the creature's affection bursts. */
 export function HeartIcon({ size = 22, color = palette.violet }: IconProps) {
   return (

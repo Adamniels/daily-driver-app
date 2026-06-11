@@ -1,6 +1,6 @@
 # Phase 5 — Stats Dashboard
 
-**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
+**Status:** Done (2026-06-11) — review passed after layout fixes (level ring, rate bar)
 **Depends on:** Phase 4
 **Blocks:** nothing (Phase 6 is independent)
 

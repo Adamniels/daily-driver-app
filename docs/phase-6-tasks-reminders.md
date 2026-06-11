@@ -1,6 +1,6 @@
 # Phase 6 — Tasks + Reminders
 
-**Status:** Not started
+**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
 **Depends on:** Phase 4
 **Blocks:** nothing
 
@@ -27,6 +27,31 @@ The "don't forget" space: one off items like *set up tmux* or *fix nvim config*,
 ## XP integration
 
 Completing a task awards `TASK_XP` (5) via the ledger (`tasks.complete`), uncompleting reverses it. Tasks deliberately do not affect streaks, mood or perfect days — those measure consistency, and a backlog purge should not inflate them. The creature still does a small hop on task completion (visual fun without mechanical weight).
+
+## Implementation notes (2026-06-11)
+
+- **No local notification-id store**: every scheduled notification carries
+  its taskId in `content.data`, so cancel works by scanning
+  `getAllScheduledNotificationsAsync`. Reconciliation (in the signed-in
+  layout, on tasks data load) wipes all task notifications and reschedules
+  from server `remind_at` — simpler and strictly more robust than diffing.
+- **Complete works by tap too**: the row's circle completes on every
+  platform; swipe right/left (complete/delete) is the native fast path.
+  Swipe-to-complete on web is unreliable with mouse input, so the circle
+  is the cross platform guarantee.
+- **Date picker**: iOS uses the system compact pickers inline; Android
+  opens system dialogs (tap = date, long press = time; Android polish is
+  out of scope per PLAN). Web falls back to a parsed "YYYY-MM-DD HH:mm"
+  text input with the "reminders fire on your phone" hint.
+- **Permission denied UX**: the reminder still saves (server data is
+  truth); an inline coral note links to system Settings.
+- Notification body is "you wanted to remember this" — the spec's 🌱
+  dropped per the no-emoji rule (Adam, phase 4 review).
+- Notification taps deep link to /tasks via a response listener +
+  `getLastNotificationResponseAsync` for cold starts.
+- **Expo Go caveat**: iOS local notifications work in Expo Go for
+  scheduling/firing, but behavior is more faithful in a dev build; the
+  reinstall-reconciliation criterion is best verified there.
 
 ## Acceptance criteria
 

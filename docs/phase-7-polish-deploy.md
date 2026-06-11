@@ -76,9 +76,9 @@ Register on prod (fresh creature), create habit, check off on phone, open web �
 
 ## Acceptance criteria
 
-- [ ] All three celebration moments implemented and felt good in person
-- [ ] CI green on main
-- [ ] API + DB deployed, healthcheck monitored by platform
-- [ ] App on your physical iPhone via TestFlight, talking to prod
-- [ ] Web deployed and usable from your laptop
-- [ ] README accurate enough that future you (or an internship interviewer) can run everything from scratch
+- [ ] All three celebration moments implemented and felt good in person (Part A — awaiting review)
+- [x] CI green on main (GitHub Actions workflow set up, runs lint + typecheck + full test suite)
+- [ ] API + DB deployed, healthcheck monitored by platform (Part B — deferred)
+- [ ] App on your physical iPhone via TestFlight, talking to prod (Part B — deferred)
+- [ ] Web deployed and usable from your laptop (Part B — deferred)
+- [x] README accurate enough that future you (or an internship interviewer) can run everything from scratch

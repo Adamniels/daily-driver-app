@@ -89,7 +89,7 @@ All inputs/outputs validated with zod schemas defined in `@habit/shared`.
 ### `auth`
 | Procedure | Input | Behavior |
 |---|---|---|
-| `register` | email, password (min 8), displayName | create user + creature, return token + user |
+| `register` | email, password (min 8), displayName, creatureName? (default 'Blob'), timezone? (IANA, default 'Europe/Stockholm') | create user + creature in one transaction, return token + user |
 | `login` | email, password | verify, return token + user |
 | `me` | — | current user |
 
@@ -118,7 +118,8 @@ Rule: `toggle` only accepts `date` = today or yesterday (forgot to log before mi
 | `summary` | totalXp, level info, creature state, today's progress, active streak count |
 | `heatmap` | core `heatmapData` for a date range |
 | `xpHistory` | XP per day for last N days (ledger group by) |
-| `habitDetail` | per habit completion rate, streak history |
+| `records` | all-time records derived without schema: longestStreak (incl. archived habits), bestDay { date, xp }, perfectDays count, totalCompletions — seeds a future achievements system |
+| `habitDetail` | per habit completion rate (30 day), streak history, last-14-day dot row |
 
 ### `creature`
 `get`, `rename`.
@@ -134,8 +135,8 @@ tRPC error codes only: UNAUTHORIZED, NOT_FOUND (or other user's resource — sam
 
 ## Acceptance criteria
 
-- [ ] `pnpm --filter @habit/api dev` serves; `/health` returns ok + db check
-- [ ] All integration tests green against the test database
-- [ ] `drizzle-kit` migrations apply cleanly from zero
-- [ ] No business rule constants in api code (all imported from core)
-- [ ] curl smoke test documented in the api README
+- [x] `pnpm --filter @habit/api dev` serves; `/health` returns ok + db check
+- [x] All integration tests green against the test database
+- [x] `drizzle-kit` migrations apply cleanly from zero
+- [x] No business rule constants in api code (all imported from core)
+- [x] curl smoke test documented in the api README

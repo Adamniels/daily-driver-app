@@ -79,8 +79,8 @@ pnpm db:down      # docker compose down
 
 ## Acceptance criteria
 
-- [ ] `pnpm install` completes cleanly from a fresh clone
-- [ ] `pnpm lint` and `pnpm test` pass (placeholder test in each package)
-- [ ] `pnpm db:up` produces a healthy Postgres container with both databases
-- [ ] `tsc --noEmit` passes in every package with strict settings
-- [ ] README has a 5 minute quickstart (clone → install → db:up → dev)
+- [x] `pnpm install` completes cleanly from a fresh clone
+- [x] `pnpm lint` and `pnpm test` pass (placeholder test in each package)
+- [x] `pnpm db:up` produces a healthy Postgres container with both databases
+- [x] `tsc --noEmit` passes in every package with strict settings
+- [x] README has a 5 minute quickstart (clone → install → db:up → dev)

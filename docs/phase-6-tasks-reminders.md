@@ -58,7 +58,7 @@ Completing a task awards `TASK_XP` (5) via the ledger (`tasks.complete`), uncomp
 - [ ] Add task in under 2 seconds from opening the screen
 - [ ] Reminder fires at the set time on iOS (device or simulator), tap opens tasks screen
 - [ ] Editing a reminder time reschedules (old notification never fires)
-- [ ] Completing/deleting a task cancels its pending notification
+- [x] Completing/deleting a task cancels its pending notification
 - [ ] Reinstall test: notifications restored from server data on first launch
-- [ ] Complete → +5 XP in ledger; uncomplete → ledger clean
-- [ ] Web: full CRUD works, reminder hint shown, nothing crashes
+- [x] Complete → +5 XP in ledger; uncomplete → ledger clean
+- [x] Web: full CRUD works, reminder hint shown, nothing crashes

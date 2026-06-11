@@ -56,5 +56,5 @@ Small horizontal scroll of earned milestones, derived (no schema): longest strea
 - [ ] Heatmap renders a full year for an account with sparse data without layout glitches, scrolls smoothly at 60fps on iOS simulator and web
 - [ ] Cell popover shows correct per day detail
 - [ ] XP chart matches ledger sums (spot check against direct DB query)
-- [ ] Per habit dot rows correctly gray out unscheduled days
-- [ ] Screen loads in one query round trip per section, with skeleton placeholders
+- [x] Per habit dot rows correctly gray out unscheduled days
+- [x] Screen loads in one query round trip per section, with skeleton placeholders

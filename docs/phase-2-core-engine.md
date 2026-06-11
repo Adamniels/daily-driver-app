@@ -22,11 +22,14 @@ Minimal date utilities on `DateString` (no library):
 
 ```ts
 type DateString = string;            // 'YYYY-MM-DD', validated
+isDateString(value: string): boolean // validates real calendar dates (rejects 2026-02-30 etc.)
 addDays(d: DateString, n: number): DateString
-diffDays(a: DateString, b: DateString): number
+diffDays(from: DateString, to: DateString): number   // positive when `to` is later
 dayOfWeek(d: DateString): Weekday    // 'mon' | ... | 'sun'
-isoWeekKey(d: DateString): string    // '2026-W24', for weekly streaks
-lastNDays(d: DateString, n: number): DateString[]
+mondayOfWeek(d: DateString): DateString              // the Monday of the ISO week containing d
+isoWeekKey(d: DateString): string    // '2026-W24', for weekly streaks (ISO year, not calendar year)
+lastNDays(d: DateString, n: number): DateString[]    // oldest first, ending at d inclusive
+datesInRange(from: DateString, to: DateString): DateString[]  // every day from from to to inclusive
 ```
 
 ### `types.ts`
@@ -57,6 +60,21 @@ Rules:
 - **Today's grace:** if today is scheduled but not yet completed, the streak from yesterday still stands (it only breaks once the day is over). A missed scheduled day before today resets to 0.
 - **Weekly habits** count consecutive ISO weeks where completions ≥ `targetPerWeek`. The current week is graceful the same way: counted if target already met, otherwise the chain up to last week stands.
 
+### `schedule.ts`
+
+When does a habit "count" for a given day? This is the single source of truth used
+by streaks, perfect day, completion rate and heatmap so the answer never drifts
+between features.
+
+```ts
+isActiveOn(habit, date): boolean
+// Habit existed (createdAt <= date) and was not yet archived (archivedAt null or > date).
+
+isScheduledOn(habit, date): boolean
+// Daily habits: true when date's weekday is in scheduledDays (null = every day).
+// Weekly habits: always false — they owe a count per week, not an appearance per day.
+```
+
 ### `xp.ts`
 
 ```ts
@@ -70,7 +88,10 @@ TASK_XP = 5
 PERFECT_DAY_BONUS = 20
 
 isPerfectDay(habits, completions, date): boolean
-// every habit scheduled on `date` is completed; false if nothing is scheduled
+// Only daily habits count. A perfect day = at least one daily habit was scheduled
+// and active on `date`, and every such habit was completed. Weekly habits don't
+// participate: they owe a weekly count, not a daily appearance. False if nothing
+// is scheduled (empty or all-weekly day is not "perfect", it is empty).
 ```
 
 XP is computed **at completion time** and written to the `xp_events` ledger by the API. Uncompleting a habit (same day toggle) deletes the corresponding event. The ledger is the source of truth for totals; core only computes amounts.
@@ -81,13 +102,15 @@ XP is computed **at completion time** and written to the `xp_events` ledger by t
 stageForLevel(level): Stage
 // egg ≥1, hatchling ≥3, sprout ≥7, juvenile ≥12, adult ≥20, mythic ≥30
 
-completionRate(habits, completions, today, days = 7): number
+completionRate(habits, completions, today, days = 7): number | null
 // completed scheduled slots / total scheduled slots over the window;
-// weekly habits contribute min(done, target) / target per week, prorated
+// weekly habits contribute min(done, target) / target per week, prorated.
+// Returns null when the window contains no slots at all (brand new account
+// with no history) — callers treat null as "no track record yet", not failure.
 
-moodFromRate(rate): Mood
+moodFromRate(rate: number | null): Mood
 // thriving ≥.8, happy ≥.6, okay ≥.4, sad ≥.2, sleeping <.2
-// special case: brand new account with no scheduled history yet → 'happy'
+// null (no track record) → 'happy': a fresh creature is content.
 
 creatureState(level, habits, completions, today): CreatureState
 // { stage, mood, level } — single entry point the UI consumes
@@ -121,7 +144,7 @@ Tests are written alongside each module. Required coverage, by case not by perce
 
 ## Acceptance criteria
 
-- [ ] `pnpm --filter @habit/core test` green, all cases above present
-- [ ] No runtime dependencies in `@habit/core` package.json
-- [ ] No `Date.now()` / `new Date()` outside `dates.ts` internals (and none that read the wall clock)
-- [ ] Every exported function has a doc comment stating its rule in plain language
+- [x] `pnpm --filter @habit/core test` green, all cases above present
+- [x] No runtime dependencies in `@habit/core` package.json
+- [x] No `Date.now()` / `new Date()` outside `dates.ts` internals (and none that read the wall clock)
+- [x] Every exported function has a doc comment stating its rule in plain language

@@ -121,10 +121,10 @@ Decisions made at build time, in spec order of importance:
 
 ## Acceptance criteria
 
-- [ ] Runs on iOS simulator and web (`pnpm --filter @habit/app dev`, then `i` / `w`)
-- [ ] Register → name creature → land on home with egg
+- [x] Runs on iOS simulator and web (`pnpm --filter @habit/app dev`, then `i` / `w`)
+- [x] Register → name creature → land on home with egg
 - [ ] Check off updates UI in <16ms perceived (optimistic), XP bar animates, creature reacts
 - [ ] Level up celebration fires at the right moment (verify against core's curve)
-- [ ] Toggle off reverses XP and streak display correctly
+- [x] Toggle off reverses XP and streak display correctly
 - [ ] Kill app → reopen → still logged in, state correct
 - [ ] Airplane mode toggle → rollback + friendly error toast

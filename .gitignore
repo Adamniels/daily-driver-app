@@ -15,3 +15,6 @@ coverage/
 
 # os
 .DS_Store
+
+# pnpm hardlink probe files
+_tmp_*

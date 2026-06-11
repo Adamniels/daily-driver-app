@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import type { Mood, Stage } from '@habit/core';
+import { HeartIcon } from '@/components/icons';
 import { palette } from '@/theme/colors';
 
 interface CreatureProps {
@@ -186,7 +187,7 @@ function FloatingHeart({ index }: { index: number }) {
 
   return (
     <Animated.View style={style} className="absolute left-1/2 top-6" pointerEvents="none">
-      <Text className="text-2xl">💜</Text>
+      <HeartIcon size={22} />
     </Animated.View>
   );
 }
@@ -298,7 +299,7 @@ function SleepyZzz() {
 
   return (
     <Animated.View style={style} className="absolute right-0 top-0" pointerEvents="none" exiting={FadeOut}>
-      <Text className="text-2xl">💤</Text>
+      <Text className="font-sans-black text-xl text-ink/40">z z z</Text>
     </Animated.View>
   );
 }

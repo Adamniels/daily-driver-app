@@ -15,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { completionXp, isScheduledOn } from '@habit/core';
 import type { Stage, Weekday } from '@habit/core';
 import { Button } from '@/components/Button';
+import { SparkleIcon } from '@/components/icons';
 import { useToast } from '@/components/Toast';
 import { Creature } from '@/creature/Creature';
 import { XpBar } from '@/components/XpBar';
@@ -195,7 +196,7 @@ export function HomeScreen() {
         <View className="items-center px-6 pt-2">
           <View className="w-full flex-row items-center justify-between">
             <Text className="font-sans-bold text-sm text-ink/50">
-              Hi {user?.displayName ?? 'there'} 👋
+              Hi {user?.displayName ?? 'there'}
             </Text>
             <Pressable
               accessibilityRole="button"
@@ -232,9 +233,16 @@ export function HomeScreen() {
         <View className="mt-6 px-6">
           <View className="mb-3 flex-row items-end justify-between">
             <Text className="font-sans-black text-2xl text-ink">Today</Text>
-            <Text className="font-sans-bold text-sm text-ink/50">
-              {perfectDay ? '🌟 perfect day!' : `${doneCount} of ${todayHabits.length} done`}
-            </Text>
+            {perfectDay ? (
+              <View className="flex-row items-center gap-1">
+                <SparkleIcon size={14} />
+                <Text className="font-sans-bold text-sm text-ink/50">perfect day!</Text>
+              </View>
+            ) : (
+              <Text className="font-sans-bold text-sm text-ink/50">
+                {doneCount} of {todayHabits.length} done
+              </Text>
+            )}
           </View>
 
           {todayHabits.length === 0 ? (

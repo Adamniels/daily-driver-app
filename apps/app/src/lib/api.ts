@@ -7,8 +7,7 @@ import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter } from '@habit/api';
 import { tokenStorage } from './tokenStorage';
 
-export const apiUrl =
-  (process.env.EXPO_PUBLIC_API_URL as string | undefined) ?? 'http://localhost:3001';
+export const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 export type ApiClient = ReturnType<typeof createTRPCClient<AppRouter>>;
 

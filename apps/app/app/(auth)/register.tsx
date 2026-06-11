@@ -69,7 +69,7 @@ export default function RegisterScreen() {
         onSubmitEditing={submit}
       />
       <Button
-        label={busy ? 'Hatching…' : 'Hatch 🥚'}
+        label={busy ? 'Hatching…' : 'Hatch your egg'}
         onPress={submit}
         disabled={busy || !ready}
       />

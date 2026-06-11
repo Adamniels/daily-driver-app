@@ -15,6 +15,7 @@ import Animated, {
   ZoomIn,
 } from 'react-native-reanimated';
 import type { Stage } from '@habit/core';
+import { SparkleIcon } from '@/components/icons';
 import { palette } from '@/theme/colors';
 
 const CONFETTI_COLORS = [palette.violet, palette.mint, palette.coral, palette.sunshine, palette.sky, palette.rose];
@@ -79,11 +80,11 @@ export function CelebrationOverlay({ level, creatureName, evolvedTo, onDone }: C
         entering={ZoomIn.springify().damping(12)}
         className="items-center gap-2 rounded-card bg-white px-10 py-8 shadow-lg"
       >
-        <Text className="text-4xl">🎉</Text>
+        <SparkleIcon size={36} />
         <Text className="font-sans-black text-3xl text-violet">Level {level}!</Text>
         {evolvedTo ? (
           <Text className="text-center font-sans-bold text-base text-ink">
-            ✨ {creatureName} evolved into a {evolvedTo}!
+            {creatureName} evolved into a {evolvedTo}!
           </Text>
         ) : (
           <Text className="text-center font-sans text-sm text-ink/60">

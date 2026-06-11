@@ -1,0 +1,21 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: habitquest-db
+    environment:
+      POSTGRES_USER: habit
+      POSTGRES_PASSWORD: habit
+      POSTGRES_DB: habitquest
+    ports:
+      - '5432:5432'
+    volumes:
+      - habitquest-data:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U habit -d habitquest']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  habitquest-data:

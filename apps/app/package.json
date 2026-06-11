@@ -1,0 +1,6 @@
+{
+  "name": "@habit/app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Expo app — scaffolded in Phase 4. Placeholder so the workspace shape is final from day one."
+}

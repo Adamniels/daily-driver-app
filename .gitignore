@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+
+# env — real secrets never enter git
+.env
+.env.*
+!.env.example
+
+# build + tool output
+dist/
+.turbo/
+.expo/
+coverage/
+*.log
+
+# os
+.DS_Store

@@ -234,9 +234,9 @@ export function HomeScreen() {
           <View className="mb-3 flex-row items-end justify-between">
             <Text className="font-sans-black text-2xl text-ink">Today</Text>
             {perfectDay ? (
-              <View className="flex-row items-center gap-1">
-                <SparkleIcon size={14} />
-                <Text className="font-sans-bold text-sm text-ink/50">perfect day!</Text>
+              <View className="flex-row items-center gap-1.5">
+                <SparkleIcon size={20} />
+                <Text className="font-sans-bold text-base text-ink">perfect day!</Text>
               </View>
             ) : (
               <Text className="font-sans-bold text-sm text-ink/50">

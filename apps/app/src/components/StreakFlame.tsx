@@ -7,14 +7,12 @@ export function StreakFlame({ streak }: { streak: number }) {
   const active = streak > 0;
   return (
     <View
-      className={`flex-row items-center gap-1 rounded-full px-2 py-0.5 ${
+      className={`flex-row items-center gap-1 rounded-full py-1 pl-2 pr-2.5 ${
         active ? 'bg-sunshine-soft' : 'bg-ink/5'
       }`}
     >
-      {active ? <FlameIcon size={12} /> : <FlameIcon size={12} color={palette.inkSoft} />}
-      <Text
-        className={`font-sans-bold text-xs ${active ? 'text-ink' : 'text-ink/40'}`}
-      >
+      <FlameIcon size={16} color={active ? palette.coral : palette.inkSoft} />
+      <Text className={`font-sans-bold text-sm ${active ? 'text-ink' : 'text-ink/40'}`}>
         {streak}
       </Text>
     </View>

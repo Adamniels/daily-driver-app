@@ -1,6 +1,6 @@
 # Phase 3 — API (`@habit/api`)
 
-**Status:** Not started
+**Status:** Done (2026-06-11) — 24 api tests green (19 integration), boot + HTTP smoke verified
 **Depends on:** Phase 1, Phase 2
 **Blocks:** Phase 4
 
@@ -34,9 +34,10 @@ habits
   target_per_week  int null            -- weekly only; 1..7
   base_xp          int not null default 10
   sort_order       int not null default 0
-  created_at       timestamptz not null
-  archived_at      timestamptz null
-  index (user_id, archived_at)
+  created_on       date not null       -- user local day; streaks never look earlier
+  archived_on      date null           -- user local day; null = active
+  created_at       timestamptz not null -- audit only
+  index (user_id, archived_on)
 
 habit_completions
   id            uuid pk
@@ -72,7 +73,7 @@ creatures
   hatched_at  timestamptz not null default now()
 ```
 
-Notes: client computes and sends `date` (its local calendar day) for completions, consistent with core's date policy. `timezone` on users is stored for future server side jobs but unused in v1.
+Notes: client computes and sends `date` (its local calendar day) for completions, consistent with core's date policy. Domain relevant days are `date` columns (user local); `timestamptz` columns are audit metadata only. `timezone` on users is used server side to validate that toggles target today/yesterday.
 
 ## Auth
 

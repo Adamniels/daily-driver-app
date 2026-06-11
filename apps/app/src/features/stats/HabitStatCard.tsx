@@ -46,7 +46,7 @@ function Dot({ status, color }: { status: HabitDetail['last14'][number]['status'
 export function HabitStatCard({ detail }: { detail: HabitDetail }) {
   const colors = habitColors[detail.habit.color as ColorToken] ?? habitColors.violet;
   // rate30 is null when the habit had no scheduled slots in the window.
-  const ratePct = Math.round((detail.rate30 ?? 0) * 100);
+  const ratePct = Math.min(100, Math.max(0, Math.round((detail.rate30 ?? 0) * 100)));
 
   return (
     <View className="gap-3 rounded-card bg-white p-4 shadow-sm shadow-ink/10">
@@ -68,10 +68,23 @@ export function HabitStatCard({ detail }: { detail: HabitDetail }) {
       </View>
 
       <View className="flex-row items-center gap-3">
-        <View className="h-2 flex-1 overflow-hidden rounded-full bg-ink/5">
+        {/* explicit geometry: percentage heights inside flex rows misbehave */}
+        <View
+          className="flex-1"
+          style={{
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: `${palette.ink}0D`,
+            overflow: 'hidden',
+          }}
+        >
           <View
-            className="h-full rounded-full"
-            style={{ width: `${ratePct}%`, backgroundColor: colors.main }}
+            style={{
+              height: 8,
+              width: `${ratePct}%`,
+              borderRadius: 4,
+              backgroundColor: colors.main,
+            }}
           />
         </View>
         <Text className="w-12 text-right font-sans-bold text-xs text-ink/50">{ratePct}%</Text>

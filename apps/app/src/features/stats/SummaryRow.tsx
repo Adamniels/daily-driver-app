@@ -9,28 +9,46 @@ import { palette } from '@/theme/colors';
 
 type Summary = RouterOutputs['stats']['summary'];
 
-/** Ring showing progress into the current level. */
+/**
+ * Ring showing progress into the current level. Explicit sizes and the
+ * label absolutely centered over the SVG — no relative sizing tricks.
+ */
+const RING_SIZE = 50;
+
 function LevelRing({ level, progress }: { level: number; progress: number }) {
-  const r = 21;
+  const r = 19;
   const c = 2 * Math.PI * r;
   return (
-    <View className="h-14 w-14 items-center justify-center">
-      <Svg width={56} height={56} viewBox="0 0 56 56" style={{ position: 'absolute' }}>
-        <Circle cx={28} cy={28} r={r} stroke={palette.violet + '26'} strokeWidth={5} fill="none" />
+    <View style={{ width: RING_SIZE, height: RING_SIZE }}>
+      <Svg width={RING_SIZE} height={RING_SIZE} viewBox="0 0 50 50">
+        <Circle cx={25} cy={25} r={r} stroke={`${palette.violet}26`} strokeWidth={5} fill="none" />
         <Circle
-          cx={28}
-          cy={28}
+          cx={25}
+          cy={25}
           r={r}
           stroke={palette.violet}
           strokeWidth={5}
           fill="none"
           strokeLinecap="round"
           strokeDasharray={`${c}`}
-          strokeDashoffset={c * (1 - Math.max(0.02, progress))}
-          transform="rotate(-90 28 28)"
+          strokeDashoffset={c * (1 - Math.max(0.02, Math.min(1, progress)))}
+          transform="rotate(-90 25 25)"
         />
       </Svg>
-      <Text className="font-sans-black text-base text-violet">{level}</Text>
+      <Text
+        className="font-sans-black text-base text-violet"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          textAlign: 'center',
+          lineHeight: RING_SIZE,
+        }}
+      >
+        {level}
+      </Text>
     </View>
   );
 }

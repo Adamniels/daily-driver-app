@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Habit Quest",
+    "slug": "habit-quest",
+    "version": "0.1.0",
+    "scheme": "habitquest",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "backgroundColor": "#FFF8F0",
+    "splash": {
+      "backgroundColor": "#FFF8F0",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "dev.adam.habitquest"
+    },
+    "android": {
+      "package": "dev.adam.habitquest",
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-font"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

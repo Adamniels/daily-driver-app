@@ -1,6 +1,6 @@
 # Phase 4 — App Foundation + Home Screen (`@habit/app`)
 
-**Status:** Not started
+**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
 **Depends on:** Phase 3
 **Blocks:** Phase 5, Phase 6
 
@@ -84,6 +84,40 @@ List with streak + completion info, archive via long press or edit screen. Creat
 ## Auth screens
 
 Minimal and warm: app name + creature egg illustration, email, password, one button. Register asks display name and creature name ("Name your companion" — the hook of the onboarding). Token persisted; auth gate in `_layout` redirects.
+
+## Implementation notes (2026-06-11)
+
+Decisions made at build time, in spec order of importance:
+
+- **Expo SDK 55** (expo 55.0.26, RN 0.83.6, React 19.2.0, Reanimated 4.2.1 +
+  react-native-worklets 0.7.4, expo-router ~55.0.16, NativeWind 4.2.5 +
+  Tailwind 3.4.19), not SDK 56. Rationale: Expo Go for SDK 56 is not on the
+  iOS App Store (TestFlight/dev-build only, Xcode 26.4 required), NativeWind
+  has no documented SDK 56 support (v5 is pre-release), and SDK 56 is where
+  Expo Router forked off react-navigation (3 weeks old). Upgrade lands in
+  Phase 7 (`npx expo install expo@^56 --fix` + router codemod).
+- **`@habit/api` gained an `exports` field** pointing at `src/trpc/router.ts`
+  so `import type { AppRouter }` resolves. Type-only import — no server code
+  is bundled.
+- **tRPC integration** is `@trpc/tanstack-react-query` (the current
+  recommended client), not the classic `@trpc/react-query`.
+- **Optimistic loop split**: onMutate flips `completedToday`/streak/weekCount
+  in the habits cache (instant checkbox/tint); the `+XP` particle amount comes
+  from core's `completionXp` with the listed streak (engine output, not UI
+  math); XP bar, level, evolution, perfect day all reconcile from the toggle
+  response in onSuccess; onError restores both caches, shakes the card,
+  toasts.
+- **Perfect day indicator** on Home is derived from daily habits only
+  (mirrors core's `isPerfectDay` semantics); the server payload triggers the
+  hearts celebration.
+- **Metro shims**: workspace packages are TS source with Node ESM `.js`
+  specifiers — a resolveRequest wrapper retries those without the extension.
+  `react-native-css-interop` is a direct dependency (pnpm isolated
+  node_modules can't reach nativewind's transitive dep from app code).
+- **ESLint**: root config gained an override allowing `require()` in
+  `apps/app/*.config.js` (Metro/Tailwind/Babel configs must be CJS).
+- Tab icons are emoji (no icon library added); sign out lives in the Home
+  header; register sends the device IANA timezone.
 
 ## Acceptance criteria
 

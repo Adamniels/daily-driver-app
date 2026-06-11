@@ -24,4 +24,12 @@ export default tseslint.config(
     files: ['**/*.{js,mjs,cjs}'],
     ...tseslint.configs.disableTypeChecked,
   },
+  {
+    // Expo tooling configs must be CommonJS (Metro/Tailwind/Babel load them
+    // with require), so allow require() there.
+    files: ['apps/app/*.config.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 );

@@ -111,8 +111,9 @@ export function HomeScreen() {
         queryClient.setQueryData(creatureKey, (old) =>
           old ? { ...old, totalXp: data.totalXp, level: data.level, state: data.creature } : old,
         );
-        // Other list variants (e.g. the Habits tab) refetch lazily.
+        // Other list variants (Habits tab) and stats refetch lazily.
         void queryClient.invalidateQueries({ queryKey: trpc.habits.list.queryKey({ includeArchived: true }) });
+        void queryClient.invalidateQueries({ queryKey: trpc.stats.pathKey() });
 
         if (data.completed) {
           if (data.perfectDay) setHeartsSignal((s) => s + 1);

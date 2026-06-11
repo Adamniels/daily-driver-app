@@ -1,10 +1,11 @@
 import { TRPCError } from '@trpc/server';
-import { and, between, eq, gte, sql, sum } from 'drizzle-orm';
+import { and, between, desc, eq, gte, sql, sum } from 'drizzle-orm';
 import {
   addDays,
   bestStreak,
   completionRate,
   creatureState,
+  datesInRange,
   heatmapData,
   isPerfectDay,
   isScheduledOn,
@@ -96,6 +97,55 @@ export const statsRouter = router({
       date,
       xp: byDate.get(date) ?? 0,
     }));
+  }),
+
+  /**
+   * All-time records, derived (no schema): seeds a future achievements
+   * system. Longest streak considers archived habits too — a record is a
+   * record.
+   */
+  records: protectedProcedure.query(async ({ ctx }) => {
+    const today = todayInTimeZone(ctx.user.timezone);
+
+    const habitRows = await ctx.db.select().from(habits).where(eq(habits.userId, ctx.user.id));
+    const completionRows = await ctx.db
+      .select()
+      .from(habitCompletions)
+      .where(eq(habitCompletions.userId, ctx.user.id));
+    const coreHabits = habitRows.map(toCoreHabit);
+    const completions = completionRows.map(toCoreCompletion);
+
+    const longestStreak = coreHabits.reduce(
+      (max, habit) =>
+        Math.max(max, bestStreak(habit, completions), streakForHabit(habit, completions, today)),
+      0,
+    );
+
+    const [bestDay] = await ctx.db
+      .select({ date: xpEvents.date, total: sql<string>`sum(${xpEvents.amount})` })
+      .from(xpEvents)
+      .where(eq(xpEvents.userId, ctx.user.id))
+      .groupBy(xpEvents.date)
+      .orderBy(desc(sql`sum(${xpEvents.amount})`))
+      .limit(1);
+
+    const firstDate = completions.reduce<DateString | null>(
+      (min, c) => (min === null || c.date < min ? c.date : min),
+      null,
+    );
+    let perfectDays = 0;
+    if (firstDate) {
+      for (const date of datesInRange(firstDate, today)) {
+        if (isPerfectDay(coreHabits, completions, date)) perfectDays += 1;
+      }
+    }
+
+    return {
+      longestStreak,
+      bestDay: bestDay ? { date: bestDay.date, xp: Number(bestDay.total) } : null,
+      perfectDays,
+      totalCompletions: completions.length,
+    };
   }),
 
   habitDetail: protectedProcedure.input(habitDetailInputSchema).query(async ({ ctx, input }) => {

@@ -1,5 +1,5 @@
 import { Redirect, Tabs } from 'expo-router';
-import { BlobTabIcon, CheckTabIcon } from '@/components/TabIcons';
+import { BlobTabIcon, ChartTabIcon, CheckTabIcon } from '@/components/TabIcons';
 import { useAuth } from '@/lib/auth';
 import { palette } from '@/theme/colors';
 
@@ -32,6 +32,13 @@ export default function MainLayout() {
         options={{
           title: 'Habits',
           tabBarIcon: ({ color }) => <CheckTabIcon color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="stats"
+        options={{
+          title: 'Stats',
+          tabBarIcon: ({ color }) => <ChartTabIcon color={color} />,
         }}
       />
     </Tabs>

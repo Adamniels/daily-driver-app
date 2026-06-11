@@ -9,8 +9,8 @@ High level vision and decisions: [`../PLAN.md`](../PLAN.md). This folder holds t
 | 1. Monorepo scaffold | [phase-1-scaffold.md](phase-1-scaffold.md) | Done (2026-06-11) | — |
 | 2. Core gamification engine | [phase-2-core-engine.md](phase-2-core-engine.md) | Done (2026-06-11) | 1 |
 | 3. API | [phase-3-api.md](phase-3-api.md) | Done (2026-06-11) | 1, 2 |
-| 4. App foundation + Home | [phase-4-app-home.md](phase-4-app-home.md) | In progress (implemented 2026-06-11, awaiting device review) | 3 |
-| 5. Stats dashboard | [phase-5-stats.md](phase-5-stats.md) | Not started | 4 |
+| 4. App foundation + Home | [phase-4-app-home.md](phase-4-app-home.md) | Done (2026-06-11) | 3 |
+| 5. Stats dashboard | [phase-5-stats.md](phase-5-stats.md) | In progress (implemented 2026-06-11, awaiting device review) | 4 |
 | 6. Tasks + reminders | [phase-6-tasks-reminders.md](phase-6-tasks-reminders.md) | Not started | 4 |
 | 7. Polish + deployment | [phase-7-polish-deploy.md](phase-7-polish-deploy.md) | Not started | 4, 5, 6 |
 

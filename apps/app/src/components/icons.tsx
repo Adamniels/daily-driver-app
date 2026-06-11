@@ -59,6 +59,37 @@ export function SparkleIcon({ size = 18, color = ICON_GOLD }: IconProps) {
   );
 }
 
+/** Trophy for best-streak and records. */
+export function TrophyIcon({ size = 16, color = ICON_GOLD }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M7 3 h10 v2 h3 v2 c0 2.8 -2 4.6 -4.4 5
+           A 5.5 5.5 0 0 1 13 15.7 V 18 h3 v3 H8 v-3 h3 v-2.3
+           A 5.5 5.5 0 0 1 8.4 12 C 6 11.6 4 9.8 4 7 V5 h3 z
+           M 4.9 6.5 v0.5 c0 1.6 1 2.9 2.4 3.4 a8 8 0 0 1 -0.3 -2 V6.5 z
+           M 19.1 6.5 h-2.1 v1.9 a8 8 0 0 1 -0.3 2 c1.4 -0.5 2.4 -1.8 2.4 -3.4 z"
+        fill={color}
+        fillRule="evenodd"
+      />
+    </Svg>
+  );
+}
+
+/** Filled check circle (totals, completions). */
+export function CheckCircleIcon({ size = 16, color = palette.mint }: IconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M12 2 a10 10 0 1 1 0 20 a10 10 0 1 1 0 -20 z
+           M 16.4 8.4 l -5.4 6 l -3.2 -2.8 l -1.4 1.5 l 4.7 4.2 l 6.8 -7.5 z"
+        fill={color}
+        fillRule="evenodd"
+      />
+    </Svg>
+  );
+}
+
 /** Heart for the creature's affection bursts. */
 export function HeartIcon({ size = 22, color = palette.violet }: IconProps) {
   return (

@@ -339,6 +339,31 @@ describe('stats', () => {
     // Days before the habit existed are unscheduled, not missed.
     expect(detail.last14[0]?.status).toBe('unscheduled');
   });
+
+  it('records derives all-time milestones', async () => {
+    const { api } = await newUser('adam@test.se');
+    const habit = await api.habits.create({ type: 'daily', name: 'Run' });
+
+    const empty = await api.stats.records();
+    expect(empty).toEqual({ longestStreak: 0, bestDay: null, perfectDays: 0, totalCompletions: 0 });
+
+    // Backdate creation so yesterday counts (completions only land on days
+    // the habit existed), then log yesterday + today: a 2 day streak.
+    await handle.db
+      .update(habitsTable)
+      .set({ createdOn: addDays(today(), -1) })
+      .where(eq(habitsTable.id, habit.id));
+    await api.completions.toggle({ habitId: habit.id, date: addDays(today(), -1) });
+    await api.completions.toggle({ habitId: habit.id, date: today() });
+
+    const records = await api.stats.records();
+    expect(records.longestStreak).toBe(2);
+    expect(records.perfectDays).toBe(2);
+    expect(records.totalCompletions).toBe(2);
+    // Today's habit XP carries the streak multiplier (10 × 1.05 ≈ 11),
+    // plus the 20 XP perfect day bonus on both days.
+    expect(records.bestDay).toEqual({ date: today(), xp: 31 });
+  });
 });
 
 describe('creature', () => {

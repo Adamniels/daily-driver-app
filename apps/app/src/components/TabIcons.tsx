@@ -25,6 +25,17 @@ export function BlobTabIcon({ color, size = 26 }: TabIconProps) {
   );
 }
 
+/** Three rounded bars for the stats tab. */
+export function ChartTabIcon({ color, size = 26 }: TabIconProps) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path d="M4 13 h3.4 v8 H4 z" fill={color} />
+      <Path d="M10.3 7 h3.4 v14 h-3.4 z" fill={color} />
+      <Path d="M16.6 10 h3.4 v11 h-3.4 z" fill={color} />
+    </Svg>
+  );
+}
+
 /** The round habit checkbox with its check mark. */
 export function CheckTabIcon({ color, size = 26 }: TabIconProps) {
   return (

@@ -1,6 +1,6 @@
 # Phase 5 — Stats Dashboard
 
-**Status:** Not started
+**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
 **Depends on:** Phase 4
 **Blocks:** nothing (Phase 6 is independent)
 
@@ -30,6 +30,26 @@ Small horizontal scroll of earned milestones, derived (no schema): longest strea
 - Heatmap and area chart are pure presentation components taking core computed data; snapshot tests in app are optional, the math already lives in core where it is tested.
 - All numbers count up on first mount (Reanimated), consistent with the app's "everything animates" rule.
 - Empty states: under 7 days of history → heatmap shows with a friendly "early days!" note instead of looking broken.
+
+## Implementation notes (2026-06-11)
+
+- **Records are served by a new `stats.records` endpoint** (longest streak
+  ever incl. archived habits, best XP day from the ledger, perfect days
+  count, total completions). "Derived, no schema" held — no DB changes —
+  but client-side derivation would have been wrong (only 30 days of
+  history) or N+1 queries. Covered by an integration test.
+- **One HTTP round trip** holds via the tRPC batch link: summary, heatmap,
+  xpHistory, records and one habitDetail per habit fire together as a
+  single batched request.
+- **xpHistory is fetched once with days: 365**: the chart slices the last
+  30, the heatmap popover joins per day XP from the same data.
+- **Heatmap popover** shows date, completion count, rate and XP. The spec's
+  "3/4 habits" needs per day scheduled counts, which core's HeatmapCell
+  (fixed shape) doesn't carry — rate covers the same signal.
+- **No emoji rule** (Adam, review 1): per habit cards use the flame and a
+  trophy SVG icon instead of the spec's 🔥/🏆.
+- Count-up numbers use requestAnimationFrame (identical native/web) rather
+  than a Reanimated text trick that is flaky on react-native-web.
 
 ## Acceptance criteria
 

@@ -1,6 +1,6 @@
 # Phase 4 — App Foundation + Home Screen (`@habit/app`)
 
-**Status:** In progress — implemented 2026-06-11, awaiting Adam's look and feel review on device
+**Status:** Done (2026-06-11) — review round 1 passed (icon polish applied); remaining unchecked criteria verify themselves in daily use
 **Depends on:** Phase 3
 **Blocks:** Phase 5, Phase 6
 

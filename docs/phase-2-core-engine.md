@@ -1,6 +1,6 @@
 # Phase 2 — Core Gamification Engine (`@habit/core`)
 
-**Status:** Not started
+**Status:** Done (2026-06-11) — 64 tests green, zero runtime deps, no wall clock reads
 **Depends on:** Phase 1
 **Blocks:** Phase 3 (API computes stats via core), Phase 4 (app renders engine output)
 
@@ -40,7 +40,7 @@ xpRequiredForLevel(n: number): number        // 100 * n^1.3, rounded
 levelFromTotalXp(totalXp: number): LevelInfo // { level, xpIntoLevel, xpForNextLevel, progress: 0..1 }
 ```
 
-Reference values (also test fixtures): level 1→2 costs 100 XP, 2→3 costs 246, 3→4 costs 417, 4→5 costs 607, so reaching level 5 takes 1 370 total. Curve is monotonic, level is unbounded.
+Reference values (also test fixtures): level 1→2 costs 100 XP, 2→3 costs 246, 3→4 costs 417, 4→5 costs 606, so reaching level 5 takes 1 369 total. Curve is monotonic, level is unbounded.
 
 ### `streaks.ts`
 

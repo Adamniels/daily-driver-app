@@ -1,11 +1,7 @@
 import { Redirect, Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { BlobTabIcon, CheckTabIcon } from '@/components/TabIcons';
 import { useAuth } from '@/lib/auth';
 import { palette } from '@/theme/colors';
-
-function TabEmoji({ emoji, focused }: { emoji: string; focused: boolean }) {
-  return <Text className={`text-xl ${focused ? '' : 'opacity-40'}`}>{emoji}</Text>;
-}
 
 export default function MainLayout() {
   const { status } = useAuth();
@@ -28,14 +24,14 @@ export default function MainLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => <TabEmoji emoji="🐣" focused={focused} />,
+          tabBarIcon: ({ color }) => <BlobTabIcon color={color} />,
         }}
       />
       <Tabs.Screen
         name="habits"
         options={{
           title: 'Habits',
-          tabBarIcon: ({ focused }) => <TabEmoji emoji="✅" focused={focused} />,
+          tabBarIcon: ({ color }) => <CheckTabIcon color={color} />,
         }}
       />
     </Tabs>
